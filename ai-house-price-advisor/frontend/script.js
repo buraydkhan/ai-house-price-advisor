@@ -13,6 +13,8 @@
     const priceLowEl = document.getElementById('price-low');
     const priceHighEl = document.getElementById('price-high');
     const insightsGrid = document.querySelector('.insights-grid');
+    const chartsSection = document.getElementById('charts-section');
+    const statsSummary = document.getElementById('stats-summary');
 
     // Mapping of insight values based on RF feature importances
     // Top features: sqft_living, statezip, yr_built, city, sqft_basement, etc.
@@ -66,6 +68,9 @@
             input.addEventListener('input', () => clearError(input));
             input.addEventListener('change', () => clearError(input));
         });
+
+        // Load charts and statistics
+        loadStats();
     }
 
     // Collect features from form
@@ -326,4 +331,240 @@
 
     // Initialize the application
     document.addEventListener('DOMContentLoaded', init);
+
+    // ---------------------------------------------------------------
+    // Charts & Statistics
+    // ---------------------------------------------------------------
+
+    let chartsLoaded = false;
+
+    function formatCurrency(val) {
+        if (val >= 1000000) return '$' + (val / 1000000).toFixed(1) + 'M';
+        if (val >= 1000) return '$' + (val / 1000).toFixed(0) + 'K';
+        return '$' + val;
+    }
+
+    async function loadStats() {
+        if (chartsLoaded) return;
+        try {
+            const resp = await fetch('/stats');
+            if (!resp.ok) return;
+            const data = await resp.json();
+            renderFeatureImportance(data.feature_importance);
+            renderPriceDistribution(data.price_distribution);
+            renderCityPrices(data.avg_price_by_city);
+            renderScatterPlot(data.price_vs_sqft);
+            renderSummary(data.summary);
+            chartsLoaded = true;
+        } catch (e) {
+            console.warn('Could not load stats:', e);
+        }
+    }
+
+    function renderFeatureImportance(features) {
+        const ctx = document.getElementById('chart-importance');
+        if (!ctx) return;
+        const labels = features.map(f => f.feature.replace('_', ' '));
+        const values = features.map(f => f.importance);
+        const colors = values.map((v, i) => {
+            const hue = 240 + (i * 8);
+            return `hsla(${hue}, 70%, 60%, 0.85)`;
+        });
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Importance',
+                    data: values,
+                    backgroundColor: colors,
+                    borderRadius: 6,
+                    borderSkipped: false,
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(ctx) { return (ctx.parsed.x * 100).toFixed(1) + '%'; }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        ticks: { callback: v => (v * 100).toFixed(0) + '%', font: { size: 11 } },
+                        grid: { color: 'rgba(0,0,0,0.04)' }
+                    },
+                    y: {
+                        ticks: { font: { size: 11 } },
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+    }
+
+    function renderPriceDistribution(dist) {
+        const ctx = document.getElementById('chart-price-dist');
+        if (!ctx) return;
+        const labels = dist.map(d => d.range);
+        const counts = dist.map(d => d.count);
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Properties',
+                    data: counts,
+                    backgroundColor: 'rgba(79, 70, 229, 0.7)',
+                    borderRadius: 6,
+                    borderSkipped: false,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(ctx) { return ctx.parsed.y + ' properties'; }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: { font: { size: 10 }, maxRotation: 45 },
+                        grid: { display: false }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: { font: { size: 11 } },
+                        grid: { color: 'rgba(0,0,0,0.04)' }
+                    }
+                }
+            }
+        });
+    }
+
+    function renderCityPrices(cities) {
+        const ctx = document.getElementById('chart-city');
+        if (!ctx) return;
+        const labels = cities.map(c => c.city);
+        const avgPrices = cities.map(c => c.avg_price);
+        const counts = cities.map(c => c.count);
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Avg Price',
+                    data: avgPrices,
+                    backgroundColor: 'rgba(20, 184, 166, 0.7)',
+                    borderRadius: 6,
+                    borderSkipped: false,
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(ctx) {
+                                const c = counts[ctx.dataIndex];
+                                return formatCurrency(ctx.parsed.x) + ' (n=' + c + ')';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        ticks: { callback: v => formatCurrency(v), font: { size: 11 } },
+                        grid: { color: 'rgba(0,0,0,0.04)' }
+                    },
+                    y: {
+                        ticks: { font: { size: 11 } },
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+    }
+
+    function renderScatterPlot(points) {
+        const ctx = document.getElementById('chart-scatter');
+        if (!ctx) return;
+        new Chart(ctx, {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: 'Properties',
+                    data: points,
+                    backgroundColor: 'rgba(236, 72, 153, 0.45)',
+                    pointRadius: 4,
+                    pointHoverRadius: 7,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(ctx) {
+                                return ctx.parsed.x.toLocaleString() + ' sqft - ' + formatCurrency(ctx.parsed.y);
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        title: { display: true, text: 'Living Area (sqft)', font: { size: 11 } },
+                        ticks: { font: { size: 10 } },
+                        grid: { color: 'rgba(0,0,0,0.04)' }
+                    },
+                    y: {
+                        title: { display: true, text: 'Price ($)', font: { size: 11 } },
+                        ticks: { callback: v => formatCurrency(v), font: { size: 10 } },
+                        grid: { color: 'rgba(0,0,0,0.04)' }
+                    }
+                }
+            }
+        });
+    }
+
+    function renderSummary(summary) {
+        if (!statsSummary) return;
+        const formatter = new Intl.NumberFormat('en-US', {
+            style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0
+        });
+        statsSummary.innerHTML = `
+            <div class="stat-card">
+                <div class="stat-value">${formatter.format(summary.median)}</div>
+                <div class="stat-label">Median Price</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">${formatter.format(summary.mean)}</div>
+                <div class="stat-label">Mean Price</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">${summary.total_records.toLocaleString()}</div>
+                <div class="stat-label">Total Records</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">${formatter.format(summary.max)}</div>
+                <div class="stat-label">Max Price</div>
+            </div>
+        `;
+    }
 })();

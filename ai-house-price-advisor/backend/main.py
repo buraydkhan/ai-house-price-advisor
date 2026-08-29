@@ -410,6 +410,83 @@ def prediction_history(
 # ---------------------------------------------------------------------------
 
 
+@app.get("/stats", include_in_schema=False)
+def dataset_stats():
+    """
+    Return dataset statistics for the frontend charts:
+    - Feature importances from the trained Random Forest model
+    - Average price by city
+    - Price distribution buckets
+    - Summary statistics (mean, median, min, max prices)
+    """
+    _load_artifacts()
+
+    # Feature importances from the RF model
+    feature_names = [
+        'bedrooms', 'bathrooms', 'sqft_living', 'sqft_lot', 'floors',
+        'waterfront', 'view', 'condition', 'sqft_above', 'sqft_basement',
+        'yr_built', 'yr_renovated', 'city', 'statezip',
+        'sqft_basement_imputed', 'yr_renovated_imputed'
+    ]
+    importances = _ml_model.feature_importances_
+    feature_importance = sorted(
+        [{"feature": n, "importance": round(float(v), 4)} for n, v in zip(feature_names, importances)],
+        key=lambda x: x["importance"],
+        reverse=True,
+    )
+
+    # Read the raw CSV for dataset-level statistics
+    csv_path = PROJECT_ROOT / "data" / "raw" / "data.csv"
+    df = pd.read_csv(csv_path)
+
+    # Average price by city
+    city_stats = (
+        df.groupby("city")["price"]
+        .agg(["mean", "count"])
+        .sort_values("mean", ascending=False)
+        .head(15)
+    )
+    avg_price_by_city = [
+        {"city": city, "avg_price": round(float(row["mean"]), 2), "count": int(row["count"])}
+        for city, row in city_stats.iterrows()
+    ]
+
+    # Price distribution (histogram buckets)
+    price_bins = [0, 200000, 400000, 600000, 800000, 1000000, 1500000, 2000000, float("inf")]
+    price_labels = ["0-200K", "200-400K", "400-600K", "600-800K", "800K-1M", "1-1.5M", "1.5-2M", "2M+"]
+    df["price_bucket"] = pd.cut(df["price"], bins=price_bins, labels=price_labels)
+    price_dist = df["price_bucket"].value_counts().reindex(price_labels, fill_value=0)
+    price_distribution = [{"range": label, "count": int(price_dist[label])} for label in price_labels]
+
+    # Summary statistics
+    price_stats = df["price"].describe()
+    summary = {
+        "mean": round(float(price_stats["mean"]), 2),
+        "median": round(float(df["price"].median()), 2),
+        "min": round(float(price_stats["min"]), 2),
+        "max": round(float(price_stats["max"]), 2),
+        "std": round(float(price_stats["std"]), 2),
+        "total_records": int(len(df)),
+    }
+
+    # Price vs sqft_living (sampled for scatter plot, max 200 points)
+    sample = df[["sqft_living", "price"]].dropna()
+    if len(sample) > 200:
+        sample = sample.sample(200, random_state=42)
+    scatter_data = [
+        {"x": int(row["sqft_living"]), "y": round(float(row["price"]), 0)}
+        for _, row in sample.iterrows()
+    ]
+
+    return {
+        "feature_importance": feature_importance,
+        "avg_price_by_city": avg_price_by_city,
+        "price_distribution": price_distribution,
+        "summary": summary,
+        "price_vs_sqft": scatter_data,
+    }
+
+
 @app.post("/test-predict", include_in_schema=False)
 def test_predict():
     """Quick test with a sample property to verify the API works."""

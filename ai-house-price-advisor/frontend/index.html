@@ -6,6 +6,7 @@
     <title>AI House Price Predictor</title>
     <link rel="stylesheet" href="/static/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -157,6 +158,31 @@
                 <h3>Market Insights</h3>
                 <div class="insights-grid">
                     <!-- Insights will be dynamically populated -->
+                </div>
+            </section>
+
+            <section class="charts-section" id="charts-section">
+                <h3>Dataset Statistics & Charts</h3>
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h4>Feature Importance</h4>
+                        <canvas id="chart-importance"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <h4>Price Distribution</h4>
+                        <canvas id="chart-price-dist"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <h4>Average Price by City</h4>
+                        <canvas id="chart-city"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <h4>Price vs Living Area</h4>
+                        <canvas id="chart-scatter"></canvas>
+                    </div>
+                </div>
+                <div class="stats-summary" id="stats-summary">
+                    <!-- Summary stats populated by JS -->
                 </div>
             </section>
         </main>
