@@ -1,0 +1,1 @@
+This project implements a full-stack AI system for house price prediction using the Random Forest Regressor model. The system takes property characteristics (location, size, rooms, condition, etc.) and returns a predicted price with a confidence interval range.
