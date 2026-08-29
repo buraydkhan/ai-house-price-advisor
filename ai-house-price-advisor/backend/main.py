@@ -1,12 +1,18 @@
 import os
 import json
 import sqlite3
+import io
+import base64
 from pathlib import Path
 from typing import Optional
 
 import numpy as np
 import pandas as pd
 import joblib
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import matplotlib.ticker as mticker
 from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -138,6 +144,10 @@ app = FastAPI(
 )
 
 app.mount("/static", StaticFiles(directory=str(FRONTEND_DIR)), name="static")
+
+CHARTS_DIR = FRONTEND_DIR / "charts"
+if CHARTS_DIR.exists():
+    app.mount("/charts", StaticFiles(directory=str(CHARTS_DIR)), name="charts")
 
 # ---------------------------------------------------------------------------
 # Helper: apply the same preprocessing used during training

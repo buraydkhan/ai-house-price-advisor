@@ -222,7 +222,33 @@ main {
 .form-actions {
     display: flex;
     justify-content: flex-end;
+    gap: 10px;
     margin-top: 8px;
+}
+
+.btn-randomize {
+    border: 2px solid rgba(79, 70, 229, 0.25);
+    border-radius: 14px;
+    padding: 14px 20px;
+    background: white;
+    color: var(--primary);
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+
+.btn-randomize:hover {
+    border-color: var(--primary);
+    background: rgba(79, 70, 229, 0.06);
+    transform: translateY(-1px);
+}
+
+.btn-randomize:active {
+    transform: translateY(1px) scale(0.98);
 }
 
 .btn-predict {
@@ -406,42 +432,27 @@ main {
 }
 
 .chart-card canvas {
-    width: 100% !important;
-    max-height: 160px;
+    display: none;
+}
+
+.chart-img {
+    width: 100%;
+    height: auto;
     display: block;
+    border-radius: 6px;
+}
+
+.summary-img {
+    width: 100%;
+    max-width: 500px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
 }
 
 .stats-summary {
     margin-top: 10px;
-    display: grid;
-    gap: 6px;
-}
-
-@media (min-width: 768px) {
-    .stats-summary {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-    }
-}
-
-.stat-card {
-    background: linear-gradient(135deg, rgba(79, 70, 229, 0.06), rgba(20, 184, 166, 0.06));
-    border: 1px solid rgba(79, 70, 229, 0.12);
-    border-radius: 8px;
-    padding: 8px 6px;
     text-align: center;
-}
-
-.stat-value {
-    font-size: 0.88rem;
-    font-weight: 800;
-    color: var(--primary);
-    margin-bottom: 2px;
-}
-
-.stat-label {
-    font-size: 0.62rem;
-    color: var(--muted);
-    font-weight: 500;
 }
 
 footer {
@@ -483,10 +494,6 @@ select.error {
 
     .chart-card {
         padding: 8px 6px;
-    }
-
-    .chart-card canvas {
-        max-height: 140px;
     }
 }
 
