@@ -366,21 +366,21 @@ main {
     background: var(--card);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255,255,255,0.75);
-    border-radius: 24px;
-    padding: 28px 24px;
+    border-radius: 18px;
+    padding: 14px 14px;
     box-shadow: var(--shadow);
-    margin-top: 24px;
+    margin-top: 18px;
 }
 
 .charts-section h3 {
-    font-size: 1.7rem;
-    margin-bottom: 20px;
+    font-size: 1.05rem;
+    margin-bottom: 10px;
     color: var(--primary-strong);
 }
 
 .charts-grid {
     display: grid;
-    gap: 22px;
+    gap: 10px;
 }
 
 @media (min-width: 768px) {
@@ -392,29 +392,29 @@ main {
 .chart-card {
     background: linear-gradient(135deg, rgba(255,255,255,0.85), rgba(238, 242, 255, 0.7));
     border: 1px solid rgba(99, 102, 241, 0.11);
-    border-radius: 18px;
-    padding: 20px 18px;
-    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+    border-radius: 12px;
+    padding: 10px 10px;
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.04);
     position: relative;
-    min-height: 280px;
 }
 
 .chart-card h4 {
-    font-size: 0.92rem;
+    font-size: 0.72rem;
     font-weight: 700;
     color: var(--text);
-    margin-bottom: 14px;
+    margin-bottom: 6px;
 }
 
 .chart-card canvas {
     width: 100% !important;
-    max-height: 260px;
+    max-height: 160px;
+    display: block;
 }
 
 .stats-summary {
-    margin-top: 24px;
+    margin-top: 10px;
     display: grid;
-    gap: 14px;
+    gap: 6px;
 }
 
 @media (min-width: 768px) {
@@ -426,26 +426,26 @@ main {
 .stat-card {
     background: linear-gradient(135deg, rgba(79, 70, 229, 0.06), rgba(20, 184, 166, 0.06));
     border: 1px solid rgba(79, 70, 229, 0.12);
-    border-radius: 16px;
-    padding: 18px 14px;
+    border-radius: 8px;
+    padding: 8px 6px;
     text-align: center;
 }
 
 .stat-value {
-    font-size: 1.4rem;
+    font-size: 0.88rem;
     font-weight: 800;
     color: var(--primary);
-    margin-bottom: 4px;
+    margin-bottom: 2px;
 }
 
 .stat-label {
-    font-size: 0.78rem;
+    font-size: 0.62rem;
     color: var(--muted);
     font-weight: 500;
 }
 
 footer {
-    margin-top: 28px;
+    margin-top: 18px;
     text-align: center;
     color: rgba(31, 41, 55, 0.78);
     font-size: 0.8rem;
@@ -475,6 +475,18 @@ select.error {
 
     header {
         padding: 22px 20px;
+    }
+
+    .charts-section {
+        padding: 10px;
+    }
+
+    .chart-card {
+        padding: 8px 6px;
+    }
+
+    .chart-card canvas {
+        max-height: 140px;
     }
 }
 

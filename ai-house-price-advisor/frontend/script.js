@@ -378,7 +378,7 @@
                     label: 'Importance',
                     data: values,
                     backgroundColor: colors,
-                    borderRadius: 6,
+                    borderRadius: 4,
                     borderSkipped: false,
                 }]
             },
@@ -397,11 +397,11 @@
                 scales: {
                     x: {
                         beginAtZero: true,
-                        ticks: { callback: v => (v * 100).toFixed(0) + '%', font: { size: 11 } },
+                        ticks: { callback: v => (v * 100).toFixed(0) + '%', font: { size: 9 } },
                         grid: { color: 'rgba(0,0,0,0.04)' }
                     },
                     y: {
-                        ticks: { font: { size: 11 } },
+                        ticks: { font: { size: 9 } },
                         grid: { display: false }
                     }
                 }
@@ -422,7 +422,7 @@
                     label: 'Properties',
                     data: counts,
                     backgroundColor: 'rgba(79, 70, 229, 0.7)',
-                    borderRadius: 6,
+                    borderRadius: 4,
                     borderSkipped: false,
                 }]
             },
@@ -439,12 +439,12 @@
                 },
                 scales: {
                     x: {
-                        ticks: { font: { size: 10 }, maxRotation: 45 },
+                        ticks: { font: { size: 8 }, maxRotation: 45 },
                         grid: { display: false }
                     },
                     y: {
                         beginAtZero: true,
-                        ticks: { font: { size: 11 } },
+                        ticks: { font: { size: 9 } },
                         grid: { color: 'rgba(0,0,0,0.04)' }
                     }
                 }
@@ -466,7 +466,7 @@
                     label: 'Avg Price',
                     data: avgPrices,
                     backgroundColor: 'rgba(20, 184, 166, 0.7)',
-                    borderRadius: 6,
+                    borderRadius: 4,
                     borderSkipped: false,
                 }]
             },
@@ -488,11 +488,11 @@
                 scales: {
                     x: {
                         beginAtZero: true,
-                        ticks: { callback: v => formatCurrency(v), font: { size: 11 } },
+                        ticks: { callback: v => formatCurrency(v), font: { size: 9 } },
                         grid: { color: 'rgba(0,0,0,0.04)' }
                     },
                     y: {
-                        ticks: { font: { size: 11 } },
+                        ticks: { font: { size: 9 } },
                         grid: { display: false }
                     }
                 }
@@ -510,8 +510,8 @@
                     label: 'Properties',
                     data: points,
                     backgroundColor: 'rgba(236, 72, 153, 0.45)',
-                    pointRadius: 4,
-                    pointHoverRadius: 7,
+                    pointRadius: 3,
+                    pointHoverRadius: 5,
                 }]
             },
             options: {
@@ -529,13 +529,13 @@
                 },
                 scales: {
                     x: {
-                        title: { display: true, text: 'Living Area (sqft)', font: { size: 11 } },
-                        ticks: { font: { size: 10 } },
+                        title: { display: true, text: 'Living Area (sqft)', font: { size: 9 } },
+                        ticks: { font: { size: 8 } },
                         grid: { color: 'rgba(0,0,0,0.04)' }
                     },
                     y: {
-                        title: { display: true, text: 'Price ($)', font: { size: 11 } },
-                        ticks: { callback: v => formatCurrency(v), font: { size: 10 } },
+                        title: { display: true, text: 'Price ($)', font: { size: 9 } },
+                        ticks: { callback: v => formatCurrency(v), font: { size: 8 } },
                         grid: { color: 'rgba(0,0,0,0.04)' }
                     }
                 }
@@ -554,12 +554,12 @@
                 <div class="stat-label">Median Price</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value">${formatter.format(summary.mean)}</div>
-                <div class="stat-label">Mean Price</div>
+                <div class="stat-value">${summary.total_records.toLocaleString()}</div>
+                <div class="stat-label">Records</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value">${summary.total_records.toLocaleString()}</div>
-                <div class="stat-label">Total Records</div>
+                <div class="stat-value">${formatter.format(summary.mean)}</div>
+                <div class="stat-label">Avg Price</div>
             </div>
             <div class="stat-card">
                 <div class="stat-value">${formatter.format(summary.max)}</div>
