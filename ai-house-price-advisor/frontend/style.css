@@ -227,28 +227,29 @@ main {
 }
 
 .btn-randomize {
-    border: 2px solid rgba(79, 70, 229, 0.25);
+    border: none;
     border-radius: 14px;
-    padding: 14px 20px;
-    background: white;
-    color: var(--primary);
-    font-weight: 600;
-    font-size: 0.9rem;
+    padding: 16px 28px;
+    background: linear-gradient(135deg, var(--accent), #0ea5e9);
+    color: white;
+    font-weight: 700;
+    font-size: 1rem;
     cursor: pointer;
+    box-shadow: 0 18px 30px rgba(20, 184, 166, 0.26);
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    transition: all 0.2s ease;
+    gap: 8px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
 }
 
 .btn-randomize:hover {
-    border-color: var(--primary);
-    background: rgba(79, 70, 229, 0.06);
     transform: translateY(-1px);
+    box-shadow: 0 22px 32px rgba(20, 184, 166, 0.32);
+    filter: brightness(1.04);
 }
 
 .btn-randomize:active {
-    transform: translateY(1px) scale(0.98);
+    transform: translateY(1px) scale(0.99);
 }
 
 .btn-predict {
@@ -382,6 +383,110 @@ main {
 .insight-label {
     font-size: 0.8rem;
     color: var(--muted);
+}
+
+/* ==========================================================================
+   Advice Section
+   ========================================================================== */
+
+.advice-section {
+    background: var(--card);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.75);
+    border-radius: 24px;
+    padding: 28px 24px;
+    box-shadow: var(--shadow);
+    margin-top: 24px;
+}
+
+.advice-section h3 {
+    font-size: 1.7rem;
+    margin-bottom: 16px;
+    color: var(--primary-strong);
+}
+
+.advice-grid {
+    display: grid;
+    gap: 18px;
+}
+
+@media (min-width: 768px) {
+    .advice-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+.advice-card {
+    background: linear-gradient(135deg, rgba(255,255,255,0.8), rgba(238, 242, 255, 0.7));
+    border: 1px solid rgba(99, 102, 241, 0.11);
+    border-radius: 18px;
+    padding: 22px 20px;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+}
+
+.advice-card.buy {
+    border-left: 4px solid #22c55e;
+}
+
+.advice-card.sell {
+    border-left: 4px solid #ec4899;
+}
+
+.advice-card.rent {
+    border-left: 4px solid #3b82f6;
+}
+
+.advice-card.invest {
+    border-left: 4px solid #f59e0b;
+}
+
+.advice-icon {
+    margin-bottom: 10px;
+    color: var(--primary);
+}
+
+.advice-card h4 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 12px;
+}
+
+.advice-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.advice-card li {
+    position: relative;
+    padding: 6px 0 6px 18px;
+    font-size: 0.88rem;
+    color: var(--muted);
+    line-height: 1.5;
+    border-bottom: 1px solid rgba(79, 70, 229, 0.06);
+}
+
+.advice-card li:last-child {
+    border-bottom: none;
+}
+
+.advice-card li::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-weight: 700;
+}
+
+@media (max-width: 520px) {
+    .advice-section {
+        padding: 18px 14px;
+    }
+
+    .advice-card {
+        padding: 16px 14px;
+    }
 }
 
 /* ==========================================================================
