@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI House Price Predictor</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <rect x="2" y="6" width="20" height="14" rx="2" ry="2"/>
+                    <path d="M6 12h4M14 12h4"/>
+                </svg>
+                <span>AI House Price Predictor</span>
+            </div>
+            <div class="header-info">
+                <h1>Estimate Your Property's Market Value</h1>
+                <p>Get a price prediction with range based on property features</p>
+            </div>
+        </header>
+        <main>
+            <section class="form-section">
+                <form id="property-form" novalidate>
+                    <div class="form-grid">
+                        
+                        <div class="form-group">
+                            <label for="bedrooms">Bedrooms <span class="required">*</span></label>
+                            <input type="number" id="bedrooms" name="bedrooms" min="0" max="20" step="0.5" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="bathrooms">Bathrooms <span class="required">*</span></label>
+                            <input type="number" id="bathrooms" name="bathrooms" min="0" max="20" step="0.5" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="sqft_living">Living Area (sq ft) <span class="required">*</span></label>
+                            <input type="number" id="sqft_living" name="sqft_living" min="100" max="10000" step="10" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="sqft_lot">Lot Area (sq ft) <span class="required">*</span></label>
+                            <input type="number" id="sqft_lot" name="sqft_lot" min="500" max="100000" step="50" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="floors">Number of Floors <span class="required">*</span></label>
+                            <select id="floors" name="floors" required>
+                                <option value="1">1 Floor</option>
+                                <option value="1.5">1.5 Floors</option>
+                                <option value="2">2 Floors</option>
+                                <option value="2.5">2.5 Floors</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Waterfront <span class="required">*</span></label>
+                            <div class="radio-group">
+                                <label><input type="radio" name="waterfront" value="0" required> No</label>
+                                <label><input type="radio" name="waterfront" value="1"> Yes</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>View Score <span class="required">*</span></label>
+                            <select id="view" name="view" required>
+                                <option value="0">No view</option>
+                                <option value="1">Poor</option>
+                                <option value="2">Fair</option>
+                                <option value="3">Good</option>
+                                <option value="4">Excellent</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Condition <span class="required">*</span></label>
+                            <select id="condition" name="condition" required>
+                                <option value="1">Poor</option>
+                                <option value="2">Fair</option>
+                                <option value="3">Average</option>
+                                <option value="4">Good</option>
+                                <option value="5">Excellent</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="city">City <span class="required">*</span></label>
+                            <select id="city" name="city" required>
+                                <option value="">Select city</option>
+                                <option value="1">Seattle</option>
+                                <option value="2">Bellevue</option>
+                                <option value="3">Redmond</option>
+                                <option value="4">Kent</option>
+                                <option value="5">Shoreline</option>
+                                <option value="6">Issaquah</option>
+                                <option value="7">Sammamish</option>
+                                <option value="8">Kenmore</option>
+                                <option value="9">Woodinville</option>
+                                <option value="10">Factoria</option>
+                                <option value="11">Other WA city</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="statezip">State/Zip <span class="required">*</span></label>
+                            <input type="text" id="statezip" name="statezip" placeholder="e.g., WA 98101" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="sqft_above">Above-Grade Sq Ft <span class="required">*</span></label>
+                            <input type="number" id="sqft_above" name="sqft_above" min="500" max="10000" step="10" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="sqft_basement">Basement Sq Ft <span class="required">*</span></label>
+                            <input type="number" id="sqft_basement" name="sqft_basement" min="0" max="5000" step="10" required>
+                            <small>Enter 0 if no basement</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="yr_built">Year Built <span class="required">*</span></label>
+                            <input type="number" id="yr_built" name="yr_built" min="1900" max="2025" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="yr_renovated">Year Renovated <span class="required">*</span></label>
+                            <input type="number" id="yr_renovated" name="yr_renovated" min="0" max="2025" required>
+                            <small>Enter 0 if not renovated</small>
+                        </div>
+                    </div>
+                    
+                    <input type="hidden" name="sqft_basement_imputed" value="0">
+                    <input type="hidden" name="yr_renovated_imputed" value="0">
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn-predict">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M12 2v4M12 20v4M4.93 4.93l2.83 2.83M16 12l-2.83 2.83M8 12l2.83 2.83M9 10v10m11-10v10"/>
+                            </svg>
+                            Predict Price
+                        </button>
+                    </div>
+                </form>
+            </section>
+            
+            <section class="result-section" id="result-section" style="display: none;">
+                <div class="result-card">
+                    <div class="price-display">
+                        <span class="price-sign">$</span>
+                        <span class="price-number" id="predicted-price">0</span>
+                    </div>
+                    <div class="price-range">
+                        Estimated market range: 
+                        <span class="range-low" id="price-low">0</span> 
+                        - 
+                        <span class="range-high" id="price-high">0</span>
+                    </div>
+                    <div class="model-info">
+                        Based on Random Forest model trained on 2,500+ Seattle transactions
+                    </div>
+                </div>
+            </section>
+            
+            <section class="insights-section" id="insights-section" style="display: none;">
+                <h3>Market Insights</h3>
+                <div class="insights-grid">
+                    <!-- Insights will be dynamically populated -->
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="/static/script.js"></script>
+</body>
+</html>
