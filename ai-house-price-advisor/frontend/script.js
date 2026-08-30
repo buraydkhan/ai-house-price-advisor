@@ -64,29 +64,31 @@
     // Randomize form with realistic random values
     window.randomizeForm = function() {
         const pick = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
-        const pickF = (min, max) => +(Math.random() * (max - min) + min).toFixed(1);
+        const pickStep = (min, max, step) => {
+            const steps = Math.floor((max - min) / step);
+            return min + pick(0, steps) * step;
+        };
 
         const bedrooms = pick(1, 5);
         const bathrooms = pick(1, Math.min(bedrooms, 4));
-        const sqft_living = pick(700, 3500);
-        const sqft_lot = pick(1500, 10000);
+        const sqft_living = pickStep(700, 3500, 10);
         const floors = [1, 1.5, 2, 2.5][pick(0, 3)];
 
         document.getElementById('bedrooms').value = bedrooms;
-        document.getElementById('bathrooms').value = pickF(1, bathrooms);
+        document.getElementById('bathrooms').value = pick(1, bathrooms) + (Math.random() > 0.5 ? 0.5 : 0);
         document.getElementById('sqft_living').value = sqft_living;
-        document.getElementById('sqft_lot').value = sqft_lot;
+        document.getElementById('sqft_lot').value = pickStep(2000, 10000, 50);
         document.getElementById('floors').value = floors;
         document.querySelector('input[name="waterfront"][value="' + pick(0, 1) + '"]').checked = true;
         document.getElementById('view').value = pick(0, 4);
         document.getElementById('condition').value = pick(2, 5);
 
-        const cityVal = pick(1, 10);
-        document.getElementById('city').value = cityVal;
+        const cities = ['Seattle','Bellevue','Redmond','Kent','Shoreline','Issaquah','Sammamish','Kenmore','Woodinville','Factoria'];
+        document.getElementById('city').value = pick(1, 10);
 
         document.getElementById('statezip').value = 'WA ' + zipCodes[pick(0, zipCodes.length - 1)];
 
-        const sqft_above = pick(Math.floor(sqft_living * 0.6), sqft_living);
+        const sqft_above = pickStep(Math.max(500, Math.floor(sqft_living * 0.6)), sqft_living, 10);
         document.getElementById('sqft_above').value = sqft_above;
         document.getElementById('sqft_basement').value = Math.max(0, sqft_living - sqft_above);
 
