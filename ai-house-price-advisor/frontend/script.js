@@ -88,9 +88,10 @@
 
         document.getElementById('statezip').value = 'WA ' + zipCodes[pick(0, zipCodes.length - 1)];
 
-        const sqft_above = pickStep(Math.max(500, Math.floor(sqft_living * 0.6)), sqft_living, 10);
+        const sqft_above = pickStep(500, sqft_living, 10);
+        const sqft_basement = Math.max(0, sqft_living - sqft_above);
         document.getElementById('sqft_above').value = sqft_above;
-        document.getElementById('sqft_basement').value = Math.max(0, sqft_living - sqft_above);
+        document.getElementById('sqft_basement').value = sqft_basement;
 
         document.getElementById('yr_built').value = pick(1970, 2023);
         document.getElementById('yr_renovated').value = Math.random() > 0.7 ? pick(2005, 2023) : 0;
