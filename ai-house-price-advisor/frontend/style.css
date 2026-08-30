@@ -464,6 +464,16 @@ main {
     border-radius: 18px;
     padding: 22px 20px;
     box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.advice-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 36px rgba(15, 23, 42, 0.08);
+}
+
+.advice-card:active {
+    transform: translateY(1px) scale(0.99);
 }
 
 .advice-card.buy {
@@ -485,6 +495,12 @@ main {
 .advice-icon {
     margin-bottom: 10px;
     color: var(--primary);
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.advice-card:hover .advice-icon {
+    transform: scale(1.15);
+    color: var(--secondary);
 }
 
 .advice-card h4 {
@@ -507,6 +523,16 @@ main {
     color: var(--muted);
     line-height: 1.5;
     border-bottom: 1px solid rgba(79, 70, 229, 0.06);
+    transition: color 0.2s ease, padding-left 0.2s ease;
+}
+
+.advice-card:hover li {
+    color: var(--text);
+}
+
+.advice-card li:hover {
+    padding-left: 22px;
+    color: var(--text);
 }
 
 .advice-card li:last-child {
@@ -519,6 +545,11 @@ main {
     left: 0;
     color: var(--accent);
     font-weight: 700;
+    transition: transform 0.2s ease;
+}
+
+.advice-card:hover li::before {
+    transform: translateX(3px);
 }
 
 @media (max-width: 520px) {
