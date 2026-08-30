@@ -46,6 +46,9 @@
         yr_renovated: [0, 2024],
     };
 
+    // Seattle-area zip codes
+    const zipCodes = ['98101', '98102', '98103', '98104', '98105', '98106', '98107', '98108', '98109', '98112', '98115', '98116', '98117', '98118', '98119', '98121', '98122', '98125', '98126', '98133', '98134', '98136', '98144', '98145', '98146', '98155', '98166', '98177', '98178', '98188', '98199'];
+
     function init() {
         document.getElementById('floors').value = '1';
         form.addEventListener('submit', handleSubmit);
@@ -63,24 +66,33 @@
         const pick = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
         const pickF = (min, max) => +(Math.random() * (max - min) + min).toFixed(1);
 
-        document.getElementById('bedrooms').value = pick(1, 6);
-        document.getElementById('bathrooms').value = pickF(1, 4);
-        document.getElementById('sqft_living').value = pick(600, 4500);
-        document.getElementById('sqft_lot').value = pick(1000, 15000);
-        document.getElementById('floors').value = [1, 1.5, 2, 2.5][pick(0, 3)];
+        const bedrooms = pick(1, 5);
+        const bathrooms = pick(1, Math.min(bedrooms, 4));
+        const sqft_living = pick(700, 3500);
+        const sqft_lot = pick(1500, 10000);
+        const floors = [1, 1.5, 2, 2.5][pick(0, 3)];
+
+        document.getElementById('bedrooms').value = bedrooms;
+        document.getElementById('bathrooms').value = pickF(1, bathrooms);
+        document.getElementById('sqft_living').value = sqft_living;
+        document.getElementById('sqft_lot').value = sqft_lot;
+        document.getElementById('floors').value = floors;
         document.querySelector('input[name="waterfront"][value="' + pick(0, 1) + '"]').checked = true;
         document.getElementById('view').value = pick(0, 4);
-        document.getElementById('condition').value = pick(1, 5);
-        document.getElementById('city').value = pick(1, 10);
+        document.getElementById('condition').value = pick(2, 5);
 
-        const sqftLiving = parseInt(document.getElementById('sqft_living').value);
-        document.getElementById('sqft_above').value = Math.min(sqftLiving, pick(Math.floor(sqftLiving * 0.7), sqftLiving));
-        document.getElementById('sqft_basement').value = Math.max(0, sqftLiving - parseInt(document.getElementById('sqft_above').value));
+        const cityVal = pick(1, 10);
+        document.getElementById('city').value = cityVal;
 
-        document.getElementById('yr_built').value = pick(1960, 2024);
-        document.getElementById('yr_renovated').value = Math.random() > 0.5 ? 0 : pick(2000, 2024);
+        document.getElementById('statezip').value = zipCodes[pick(0, zipCodes.length - 1)];
 
-        // Clear insights cache so fresh insights are generated
+        const sqft_above = pick(Math.floor(sqft_living * 0.6), sqft_living);
+        document.getElementById('sqft_above').value = sqft_above;
+        document.getElementById('sqft_basement').value = Math.max(0, sqft_living - sqft_above);
+
+        document.getElementById('yr_built').value = pick(1970, 2023);
+        document.getElementById('yr_renovated').value = Math.random() > 0.7 ? pick(2005, 2023) : 0;
+
         insightCache = null;
     };
 
