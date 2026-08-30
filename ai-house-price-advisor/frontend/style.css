@@ -347,6 +347,48 @@ main {
     padding-top: 12px;
 }
 
+.model-comparison {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin: 16px 0 10px;
+    flex-wrap: wrap;
+}
+
+.model-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-size: 0.82rem;
+    font-weight: 600;
+}
+
+.model-tag.rf {
+    background: rgba(79, 70, 229, 0.08);
+    border: 1px solid rgba(79, 70, 229, 0.2);
+    color: var(--primary);
+}
+
+.model-tag.dl {
+    background: rgba(236, 72, 153, 0.08);
+    border: 1px solid rgba(236, 72, 153, 0.2);
+    color: var(--secondary);
+}
+
+.model-tag.ensemble {
+    background: rgba(20, 184, 166, 0.08);
+    border: 1px solid rgba(20, 184, 166, 0.2);
+    color: var(--accent);
+}
+
+.model-tag .label {
+    font-size: 0.7rem;
+    color: var(--muted);
+    font-weight: 400;
+}
+
 .insights-section h3 {
     font-size: 1.7rem;
     margin-bottom: 12px;

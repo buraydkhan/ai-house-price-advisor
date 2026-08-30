@@ -137,9 +137,23 @@
         const fmt = new Intl.NumberFormat('en-US', {
             style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0
         });
-        predictedPriceEl.textContent = fmt.format(result.predicted_price || 0);
+
+        // Main price (ensemble)
+        const mainPrice = result.ensemble_price || result.predicted_price || 0;
+        predictedPriceEl.textContent = fmt.format(mainPrice);
         priceLowEl.textContent = fmt.format(result.price_range_low || 0);
         priceHighEl.textContent = fmt.format(result.price_range_high || 0);
+
+        // Model comparison tags
+        const compEl = document.getElementById('model-comparison');
+        if (compEl) {
+            let html = '<div class="model-tag rf"><span class="label">RF</span> ' + fmt.format(result.predicted_price || 0) + '</div>';
+            if (result.dl_price) {
+                html += '<div class="model-tag dl"><span class="label">DL</span> ' + fmt.format(result.dl_price) + '</div>';
+                html += '<div class="model-tag ensemble"><span class="label">Ensemble</span> ' + fmt.format(result.ensemble_price || 0) + '</div>';
+            }
+            compEl.innerHTML = html;
+        }
 
         resultSection.style.display = 'block';
         resultSection.classList.add('active');

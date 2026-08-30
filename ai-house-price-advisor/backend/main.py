@@ -27,6 +27,7 @@ FRONTEND_DIR = PROJECT_ROOT / "frontend"
 MODELS_DIR = PROJECT_ROOT / "models"
 
 ML_MODEL_PATH = MODELS_DIR / "ml_model.joblib"
+DL_MODEL_PATH = MODELS_DIR / "dl_model.joblib"
 PREPROCESSING_PATH = MODELS_DIR / "preprocessing.joblib"
 LABEL_ENCODERS_PATH = MODELS_DIR / "label_encoders.joblib"
 
@@ -34,14 +35,20 @@ LABEL_ENCODERS_PATH = MODELS_DIR / "label_encoders.joblib"
 # Load artifacts once at startup
 # ---------------------------------------------------------------------------
 _ml_model = None
+_dl_model = None
+_dl_scaler = None
 _preprocessing = None
 _label_encoders = None
 
 
 def _load_artifacts():
-    global _ml_model, _preprocessing, _label_encoders
+    global _ml_model, _dl_model, _dl_scaler, _preprocessing, _label_encoders
     if _ml_model is None:
         _ml_model = joblib.load(ML_MODEL_PATH)
+    if _dl_model is None and DL_MODEL_PATH.exists():
+        dl_data = joblib.load(DL_MODEL_PATH)
+        _dl_model = dl_data["model"]
+        _dl_scaler = dl_data["scaler"]
     if _preprocessing is None:
         _preprocessing = joblib.load(PREPROCESSING_PATH)
     if _label_encoders is None:
@@ -119,9 +126,12 @@ class PropertyFeatures(BaseModel):
 
 class PredictionResponse(BaseModel):
     predicted_price: float
+    dl_price: Optional[float] = None
+    ensemble_price: Optional[float] = None
     price_range_low: float
     price_range_high: float
     model: str = "RandomForestRegressor"
+    dl_model: str = "MLPRegressor (128->64->32)"
     confidence: Optional[float] = None
 
 
@@ -293,18 +303,25 @@ def predict(property_features: PropertyFeatures):
         ]
         model_input = pd.DataFrame(arr, columns=feature_names)
 
-        # Model prediction
+        # Random Forest prediction
         predicted_price = float(_ml_model.predict(model_input)[0])
 
-        # Simple confidence interval: ±1.96 * standard deviation from tree variance
-        # Since RandomForest doesn't directly give us prediction intervals,
-        # we use the standard deviation of tree predictions as uncertainty
+        # Simple confidence interval from tree variance
         tree_predictions = np.array(
             [tree.predict(model_input.to_numpy())[0] for tree in _ml_model.estimators_]
         )
         std_err = float(np.std(tree_predictions))
         price_range_low = round(predicted_price - 1.96 * std_err, 2)
         price_range_high = round(predicted_price + 1.96 * std_err, 2)
+
+        # Deep learning (MLP) prediction
+        dl_price = None
+        ensemble_price = predicted_price
+        if _dl_model is not None and _dl_scaler is not None:
+            arr_scaled = _dl_scaler.transform(arr)
+            dl_price = round(float(_dl_model.predict(arr_scaled)[0]), 2)
+            # Ensemble: weighted average (RF gets 60%, DL gets 40%)
+            ensemble_price = round(0.6 * predicted_price + 0.4 * dl_price, 2)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Prediction failed: {e}") from e
 
@@ -360,6 +377,8 @@ def predict(property_features: PropertyFeatures):
 
     return PredictionResponse(
         predicted_price=round(predicted_price, 2),
+        dl_price=dl_price,
+        ensemble_price=ensemble_price,
         price_range_low=round(price_range_low, 2),
         price_range_high=round(price_range_high, 2),
     )
