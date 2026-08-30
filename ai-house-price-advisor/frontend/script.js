@@ -84,7 +84,7 @@
         const cityVal = pick(1, 10);
         document.getElementById('city').value = cityVal;
 
-        document.getElementById('statezip').value = zipCodes[pick(0, zipCodes.length - 1)];
+        document.getElementById('statezip').value = 'WA ' + zipCodes[pick(0, zipCodes.length - 1)];
 
         const sqft_above = pick(Math.floor(sqft_living * 0.6), sqft_living);
         document.getElementById('sqft_above').value = sqft_above;
